@@ -1,96 +1,84 @@
-# legacy-crud-app
+# 📝 Solana CRUD dApp (Anchor)
 
-## Getting Started
+A simple decentralized Journal application built on the Solana blockchain using the [Anchor framework](https://www.anchor-lang.com/docs). This dApp demonstrates basic **Create**, **Update**, and **Delete** operations for user-specific journal entries.
 
-### Prerequisites
+---
 
-- Node v18.18.0 or higher
+## 🛠️ Features
 
-- Rust v1.77.2 or higher
-- Anchor CLI 0.30.1 or higher
-- Solana CLI 1.18.17 or higher
+- **Create** a new journal entry (unique per user & title)
+- **Update** the message of an existing journal entry
+- **Delete** a journal entry
+- Uses `seeds` and `bump` to derive PDA accounts per user and entry title
 
-### Installation
+---
 
-#### Clone the repo
+## 📦 Program Info
 
-```shell
-git clone <repo-url>
-cd <repo-name>
+- **Program ID**: `coUnmi3oBUtwtd9fjeAvSsJssXh5A5xyPbhpewyzRVF`
+- **Language**: Rust (Anchor)
+- **Account Model**: Each `JournalEntryState` is stored in a PDA derived from `(title, owner)`.
+
+---
+
+## 📁 Account Structure
+
+### `JournalEntryState`
+
+```text
+| Field   | Type     | Description          |
+|---------|----------|----------------------|
+| owner   | `Pubkey` | Owner of the entry   |
+| title   | `String` | Max 50 chars         |
+| message | `String` | Max 100 chars        |
 ```
 
-#### Install Dependencies
+## 🔧 Instructions
 
-```shell
-pnpm install
+Building:
+
+```bash
+anchor build -- -- -Znext-lockfile-bump
 ```
 
-#### Start the web app
+Run the test validator
 
-```
-pnpm dev
-```
-
-## Apps
-
-### anchor
-
-This is a Solana program written in Rust using the Anchor framework.
-
-#### Commands
-
-You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the
-command with `pnpm`, eg: `pnpm anchor`.
-
-#### Sync the program id:
-
-Running this command will create a new keypair in the `anchor/target/deploy` directory and save the address to the
-Anchor config file and update the `declare_id!` macro in the `./src/lib.rs` file of the program.
-
-You will manually need to update the constant in `anchor/lib/counter-exports.ts` to match the new program id.
-
-```shell
-pnpm anchor keys sync
+```bash
+solana-test-validator
 ```
 
-#### Build the program:
+Deploying
 
-```shell
-pnpm anchor-build
+```bash
+anchor deploy --provider.cluster localnet
 ```
 
-#### Start the test validator with the program deployed:
+Example of expected output:
 
-```shell
-pnpm anchor-localnet
+```text
+Deploying cluster: http://127.0.0.1:8899
+Upgrade authority: /Users/*******/.config/solana/id.json
+Deploying program "crudapp"...
+Program path: /crud-app/anchor/target/deploy/crudapp.so...
+Program Id: 8QJXi7Jgd512foSuyfV7hReNPTWNqMpxgk1YHCjaJYQb
+
+Deploy success
 ```
 
-#### Run the tests
+Sync the keys, to prevent mismatches between the Anchor.toml and actual deployed program, and to make sure that 
+the Anchor CLI knows which program to interact with when using `anchor test`, `anchor deploy`, or `anchor run`:
 
-```shell
-pnpm anchor-test
+```bash
+anchor keys sync
 ```
 
-#### Deploy to Devnet
+Example of expected output:
+```text
+Found incorrect program id declaration in "/crud-app/anchor/programs/crudapp/src/lib.rs"
+Updated to 8QJXi7Jgd512foSuyfV7hReNPTWNqMpxgk1YHCjaJYQb
 
-```shell
-pnpm anchor deploy --provider.cluster devnet
-```
+Found incorrect program id declaration in Anchor.toml for the program `crudapp`
+Updated to 8QJXi7Jgd512foSuyfV7hReNPTWNqMpxgk1YHCjaJYQb
 
-### web
-
-This is a React app that uses the Anchor generated client to interact with the Solana program.
-
-#### Commands
-
-Start the web app
-
-```shell
-pnpm dev
-```
-
-Build the web app
-
-```shell
-pnpm build
+All program id declarations are synced.
 ```
